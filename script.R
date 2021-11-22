@@ -1,3 +1,4 @@
+#This script generates plot from Instron cyclic testing data
 library(ggplot2)
 library(scales)
 library(svglite)
@@ -9,6 +10,7 @@ data$Stress = data$Stress/1000
 plot(data$Strain, data$Stress)
 data$Cycle = NA
 processed = data
+#Extract cycle n, with i/"number_of_data_points_in_a_cycle" < n
 for (i in 1:nrow(data))
 {
   if (i/70 < 1)
@@ -38,10 +40,13 @@ for (i in 1:nrow(data))
   }
 }
 processed = data[complete.cases(data), ]
+#Move the origin of cyclic plot to (0,0)
 processed$Strain = processed$Strain + 0.0137 
+processed$Stress = processed$Stress + 335.6643
 plot(processed$Strain, processed$Stress)
 ggplot(processed) +
   geom_path(aes(x = Strain, y = Stress, color = Cycle), size = 1) +
+  #Use Cornell branding color to label different cycles
   scale_color_manual(name = "Cycle",
                      labels = c("Cycle 1", "Cycle 10", "Cycle 25", "Cycle 50"),
                      values = c("#006699", "#6EB43F", "#F8981D", "#073949")) +
@@ -55,5 +60,6 @@ ggplot(processed) +
     axis.title = element_text(size=10, color = "black", face = "bold"),
     legend.title = element_blank(),
     legend.text = element_text(size=10, color = "black", face = "bold"))
+#Save plot as an svg file in the working directory
 ggsave("cycle.svg", width = 80, height = 80, units = "mm")
 levels(processed$Cycle)
