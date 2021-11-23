@@ -39,6 +39,7 @@ for (i in 1:nrow(data))
     data[i,3] = "Cycle 50"
   }
 }
+#Remove rows with missing value
 processed = data[complete.cases(data), ]
 #Move the origin of cyclic plot to (0,0)
 processed$Strain = processed$Strain + 0.0137 
